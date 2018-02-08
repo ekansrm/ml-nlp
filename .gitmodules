@@ -1,3 +1,6 @@
 [submodule "model"]
 	path = model
 	url = git@github.com:ekansrm-public/ml-model.git
+[submodule "data"]
+	path = data
+	url = git@github.com:ekansrm/ml-data.git
