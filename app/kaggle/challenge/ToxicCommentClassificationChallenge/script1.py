@@ -224,7 +224,7 @@ class Runner(object):
             class_weight=None, sample_weight=None, initial_epoch=0, **kwargs):
 
         if callbacks is None:
-            suffix = '.%d.checkpoint' '.epoch-{epoch:02d}' '.val_loss-{val_loss:.6f}' '.val_acc-{val_acc:.6f}'
+            suffix = '.checkpoint' '.epoch-{epoch:02d}' '.val_loss-{val_loss:.6f}' '.val_acc-{val_acc:.6f}'
 
             model_checkpoint_best_path = os.path.join(self._save_dir, self.model_filename + '.best')
 
@@ -350,5 +350,5 @@ if __name__ == '__main__':
         .init(save_dir=filepath("BiLSTM"),
               inputs_len=maxlen, inputs_vocab=max_features,
               outputs_class=["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate"])\
-        .set_x(X_t).set_y(y).fit(batch_size=batch_size, epochs=epochs, validation_split=0.1)\
-        .set_x(X_te).set_idx(test['id']).predict(verbose=True).submit("123.csv")
+        .set_x(X_t).set_y(y).fit(batch_size=batch_size, epochs=epochs, validation_split=0.1)
+    Runner.load(save_dir=filepath("BiLSTM")).set_x(X_te).set_idx(test['id']).predict(verbose=True).submit("123.csv")
