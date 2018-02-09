@@ -140,31 +140,16 @@ class EmbeddingBiLSTM(object):
 
 class RunnerBiLSTM(object):
 
-    def __init__(self):
-        self._model = None
+    def __init__(self, model, save_path):
+        self._model = model
+        self._save_path = save_path
 
     @classmethod
-    def build(cls, ):
+    def build(cls, save_path):
         """
-
         :param self:
         :return:
         """
-
-        return cls()
-
-    @classmethod
-    def load(cls):
-        """"""
-
-
-    def fit(self, ):
-
-        file_path = filepath("weights_base.best.hdf5")
-
-        checkpoint = ModelCheckpoint(file_path, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
-
-        early = EarlyStopping(monitor="val_loss", mode="min", patience=20)
 
         inp = Input(shape=(maxlen, ))
 
@@ -186,12 +171,42 @@ class RunnerBiLSTM(object):
 
         model = Model(inputs=inp, outputs=op)
 
+        model.compile(loss='binary_crossentropy',
+                      optimizer='adam',
+                      metrics=['accuracy'])
+
+        return cls(model, save_path)
+
+    @classmethod
+    def load(cls):
+        """"""
+
+    def fit(self, x, y, batch_size=32, epochs=10, verbose=1, callbacks=None,
+            validation_split=0., validation_data=None, shuffle=True,
+            class_weight=None, sample_weight=None, initial_epoch=0, **kwargs):
+
+        file_path = filepath("weights_base.best.hdf5")
+
+        checkpoint = ModelCheckpoint(file_path, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+
+        early = EarlyStopping(monitor="val_loss", mode="min", patience=20)
+
+        callbacks_list = [checkpoint, early] #early
+
+        model.fit(X_t, y, batch_size=batch_size, epochs=epochs, validation_split=0.1, callbacks=callbacks_list)
 
     def predict(self,):
         """
 
         :return:
         """
+        y_test = model.predict(X_te)
+
+        sample_submission = pd.read_csv(filepath("sample_submission.csv"))
+
+        sample_submission[list_classes] = y_test
+
+        sample_submission.to_csv(filepath("baseline.csv"), index=False)
 
 
 def get_model():
