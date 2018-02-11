@@ -193,6 +193,7 @@ class Runner(object):
         params_dict = {
             'save_dir': save_dir,
             'inputs_len': inputs_len,
+            'inputs_vocab': inputs_vocab,
             'outputs_class': outputs_class,
         }
 
@@ -214,9 +215,10 @@ class Runner(object):
         model_filepath = os.path.join(save_dir, cls.model_filename)
         if not os.path.isfile(model_filepath):
             model_filepath = model_filepath + '.best'
-        kwargs = json.load(open(file=model_filepath, mode="r"))
-        model = load_model(os.path.join(save_dir, cls.params_filename))
-        kwargs['model'] = model
+        prams_filepath = os.path.join(save_dir, cls.params_filename)
+        kwargs = json.load(open(file=prams_filepath, mode="r"))
+        loaded_model = load_model(model_filepath)
+        kwargs['model'] = loaded_model
         return cls(**kwargs)
 
     def fit(self, batch_size=32, epochs=10, verbose=1, callbacks=None,
